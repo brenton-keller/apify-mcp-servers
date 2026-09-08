@@ -19,7 +19,16 @@ jobs:
         run: ./mcp-publisher login github-oidc
       - name: Publish every server.json
         run: |
-          set -e
+          # Publish each server; a name+version already in the registry is a no-op, any other error fails the job.
+          rc=0
           for f in */server.json; do
-            echo "== $f"; ./mcp-publisher publish "$f"
+            echo "== $f"
+            if out=$(./mcp-publisher publish "$f" 2>&1); then
+              echo "$out"
+            elif echo "$out" | grep -q 'duplicate version'; then
+              echo "already published, skipping"
+            else
+              echo "$out"; rc=1
+            fi
           done
+          exit $rc
