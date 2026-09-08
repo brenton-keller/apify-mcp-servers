@@ -1,0 +1,14 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.brenton-keller/pdf-text-table-ocr-extractor",
+  "title": "PDF Text, Table and OCR Extractor",
+  "description": "PDF URLs to per-page text, tables as rows, Markdown, metadata and OCR for scanned pages.",
+  "version": "0.1.0",
+  "websiteUrl": "https://apify.com/brenton8907/pdf-text-table-ocr-extractor",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.apify.com/?tools=brenton8907/pdf-text-table-ocr-extractor"
+    }
+  ]
+}
