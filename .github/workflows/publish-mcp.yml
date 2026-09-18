@@ -17,6 +17,22 @@ jobs:
           curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
       - name: Authenticate to MCP Registry (GitHub OIDC)
         run: ./mcp-publisher login github-oidc
+      - name: Validate server.json against registry limits
+        run: |
+          # The registry rejects description > 100 chars with a 422 that is easy to miss in a green-ish log.
+          python3 - <<'EOF'
+          import json, glob, sys
+          bad = []
+          for f in sorted(glob.glob('*/server.json')):
+              d = json.load(open(f))
+              n = len(d.get('description', ''))
+              print(f"{n:4}  {f}")
+              if n > 100:
+                  bad.append(f"{f}: description is {n} chars, registry limit is 100")
+          if bad:
+              sys.exit("\n".join(bad))
+          EOF
+
       - name: Publish every server.json
         run: |
           # Publish each server; a name+version already in the registry is a no-op, any other error fails the job.
